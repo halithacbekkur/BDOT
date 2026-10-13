@@ -345,19 +345,48 @@ flowchart LR
     Q -->|"Diğer Durum"| Reject
       </div>
 
+      <h4>2. Bileşenlerin Görevleri ve Yazılım Mühendisliği Karşılığı</h4>
       <ul>
-        <li><strong>1. Girdi Şeridi (Input Tape):</strong> Simgeler sırayla yer alır. Okuma kafası tek tek ve yalnızca soldan sağa ilerler.</li>
-        <li><strong>2. Sonlu Denetim Birimi (Finite Control):</strong> Durumları (states) yönetir. Başlangıç durumu <code>q₀</code> ile başlar. <strong>Harici belleği (RAM/Stack) yoktur.</strong> Tek hafızası o anki aktif durumudur.</li>
-        <li><strong>3. Karar Mekanizması:</strong> Dizi bittiğinde ulaşılan durum bir <strong>Kabul Durumu (Final State)</strong> ise KABUL; değilse RED edilir.</li>
+        <li>
+          <strong>1. Girdi Şeridi (Input Tape):</strong>
+          <ul>
+            <li><strong>Tanım:</strong> Üzerinde okunacak dizginin simgeleri (<code>a</code>, <code>b</code>, <code>b</code>, <code>a</code>) sırayla yazılı olan şerittir.</li>
+            <li><strong>Kural:</strong> Okuma kafası her adımda <strong>yalnızca bir simge</strong> okur ve <strong>sadece soldan sağa doğru</strong> ilerler (standart modelde asla geri gidemez).</li>
+            <li><strong>Yazılım Karşılığı:</strong> Kodundaki bir <code>string</code> üzerinde karakter karakter ilerleyen <code>index</code> işaretçisi (pointer).</li>
+          </ul>
+        </li>
+        <li>
+          <strong>2. Sonlu Denetim Birimi (Finite Control - FSM):</strong>
+          <ul>
+            <li><strong>Tanım:</strong> Makinenin beynidir. Makine tek bir başlangıç durumundan (<code>q₀</code>) başlar.</li>
+            <li><strong>Kritik Özellik (Belleksizlik):</strong> Bu makinenin harici bir RAM'i, dizisi ya da yığıtı (stack'i) <strong>YOKTUR</strong>. Tek hatırlayabildiği şey: <em>"Şu anda hangi durumdayım (state)?"</em> sorusunun cevabıdır.</li>
+            <li><strong>Yazılım Karşılığı:</strong> Bir <code>switch-case</code> veya <code>enum State { IDLE, READING, DONE }</code> yapısıdır.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>3. Karar Mekanizması: Kabul (Accept) ve Red (Reject):</strong>
+          <p>Bir dizgi şeritte baştan sona okundu ve bitti. Makine bu dizgiyi kabul mü edecek, red mi?</p>
+          <ul>
+            <li><strong>Kabul (Accept):</strong> Dizginin son simgesi okunduktan sonra makinenin ulaştığı durum bir <strong>"Kabul Durumu" (Accepting / Final State)</strong> ise dizgi geçerlidir (KABUL).</li>
+            <li><strong>Red (Reject):</strong> Dizgi bittiğinde makine kabul durumunda değilse, dizgi dile ait değildir (RED).</li>
+            <li><strong>Yazılım Karşılığı:</strong> Bir <code>regex.test(input)</code> fonksiyonunun <code>true</code> ya da <code>false</code> dönmesi veya derleyicinin sözdizimi hatası (Syntax Error) vermesi.</li>
+          </ul>
+        </li>
       </ul>
 
       <div class="card-note">
         <h4>📝 Not Defterine Yazılacaklar (Hap Bilgiler)</h4>
-        <ul>
-          <li><strong>Sonlu Özdevinir (FA):</strong> Belleği yalnızca sonlu durumlarla sınırlı soyut durum makinesidir.</li>
-          <li><strong>Şerit Modeli:</strong> Girdi Şeridi, Okuma Kafası ve Sonlu Denetim Birimi'nden oluşur.</li>
-          <li><strong>Kabul Kuralı:</strong> Dizi bittiğinde Final State'te ise KABUL, aksi halde RED.</li>
-        </ul>
+        <ol>
+          <li><strong>Sonlu Özdevinir (FA):</strong> Belleği yalnızca sonlu durumlarla sınırlı olan, harici belleksiz (RAM'siz) soyut tanıma makinesidir.</li>
+          <li><strong>Şerit Modeli 3 Parçadan Oluşur:</strong>
+            <ul>
+              <li><strong>Girdi Şeridi:</strong> Simgeleri tutar, sadece soldan sağa tek yönlü okunur.</li>
+              <li><strong>Okuma Kafası:</strong> Her adımda bir simge ilerler.</li>
+              <li><strong>Sonlu Denetim Birimi:</strong> O anki duruma ve gelen simgeye göre yeni duruma geçer.</li>
+            </ul>
+          </li>
+          <li><strong>Kabul / Red Kuralı:</strong> Dizgi tamamen bittiğinde makinenin durduğu durum bir <strong>Kabul Durumu (Final State)</strong> ise KABUL edilir; aksi halde RED edilir.</li>
+        </ol>
       </div>
     </div>
 

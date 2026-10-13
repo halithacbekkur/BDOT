@@ -9,6 +9,7 @@
 - [BÖLÜM 1: Sonlu Özdevinirler (Finite Automata - FA)](#bölüm-1-sonlu-özdevinirler-finite-automata---fa)
   - [1.1. Temel Kavramlar](#11-temel-kavramlar)
     - [Parça 1: Dört Temel Yapı Taşı](#parça-1-dört-temel-yapı-taşı)
+    - [Parça 2: Sonlu Özdevinir (FA) Nedir, Şerit Modeli ve Karar Mekanizması](#parça-2-sonlu-özdevinir-fa-nedir-şerit-modeli-ve-karar-mekanizması)
 
 ---
 
@@ -22,9 +23,9 @@ Biçimsel diller teorisinde tüm mimari 4 temel kavramın hiyerarşisi üzerine 
 
 ```mermaid
 flowchart LR
-    A["1. Simge (Symbol)\nÖrn: a, 0"] -->|Bir araya gelir| B["2. Alfabe (Sigma - Σ)\nÖrn: Σ = {0, 1}"]
-    B -->|Sıralı dizilir| C["3. Dizgi (String - w)\nÖrn: w = 0101"]
-    C -->|Küme oluşturur| D["4. Dil (Language - L)\nÖrn: L = {0, 10, 100}"]
+    A["1. Simge (Symbol)<br>Örn: a, 0"] -->|Bir araya gelir| B["2. Alfabe (Sigma - Σ)<br>Örn: Σ = {0, 1}"]
+    B -->|Sıralı dizilir| C["3. Dizgi (String - w)<br>Örn: w = 0101"]
+    C -->|Küme oluşturur| D["4. Dil (Language - L)<br>Örn: L = {0, 10, 100}"]
 ```
 
 #### 1. Simge (Symbol)
@@ -71,7 +72,7 @@ flowchart LR
 ### Parça 2: Sonlu Özdevinir (FA) Nedir, Şerit Modeli ve Karar Mekanizması
 
 #### 1. Soyut Şerit Modeli (Tape Model)
-Matematiksel olarak bir Sonlu Özdevinir (FA) şu 3 ana bileşenden oluşur:
+Bir Sonlu Özdevinir (FA) teorik olarak soldan sağa çalışan şu 3 ana parçadan oluşur:
 
 ```mermaid
 flowchart LR
@@ -95,15 +96,30 @@ flowchart LR
     Q -->|"Diğer Durum"| Reject
 ```
 
-#### 2. Bileşenlerin Görevleri
-* **1. Girdi Şeridi (Input Tape):** Üzerinde okunacak simgeler sırayla yer alır. Okuma kafası her adımda sadece bir simge okur ve yalnızca soldan sağa ilerler (geri dönemez).
-* **2. Sonlu Denetim Birimi (Finite Control):** Makinenin durumlarını barındırır. Makine tek bir başlangıç durumundan (`q₀`) başlar. Harici belleği (RAM/Stack) yoktur; tek hafızası o anda bulunduğu aktif durumdur.
-* **3. Karar Mekanizması:** Girdi dizgisi tamamen okunduktan sonra makinenin durduğu durum bir **Kabul Durumu (Final State)** ise dizgi **KABUL** edilir; aksi halde **RED** edilir.
+#### 2. Bileşenlerin Görevleri ve Yazılım Mühendisliği Karşılığı
+
+* **1. Girdi Şeridi (Input Tape):**
+  * **Tanım:** Üzerinde okunacak dizginin simgeleri (`a`, `b`, `b`, `a`) sırayla yazılı olan şerittir.
+  * **Kural:** Okuma kafası her adımda **yalnızca bir simge** okur ve **sadece soldan sağa doğru** ilerler (standart modelde asla geri gidemez).
+  * **Yazılım Karşılığı:** Kodundaki bir `string` üzerinde karakter karakter ilerleyen `index` işaretçisi (pointer).
+
+* **2. Sonlu Denetim Birimi (Finite Control - FSM):**
+  * **Tanım:** Makinenin beynidir. Makine tek bir başlangıç durumundan (`q₀`) başlar.
+  * **Kritik Özellik (Belleksizlik):** Bu makinenin harici bir RAM'i, dizisi ya da yığıtı (stack'i) **YOKTUR**. Tek hatırlayabildiği şey: *"Şu anda hangi durumdayım (state)?"* sorusunun cevabıdır.
+  * **Yazılım Karşılığı:** Bir `switch-case` veya `enum State { IDLE, READING, DONE }` yapısıdır.
+
+* **3. Karar Mekanizması: Kabul (Accept) ve Red (Reject):**
+  Bir dizgi şeritte baştan sona okundu ve bitti. Makine bu dizgiyi kabul mü edecek, red mi?
+  * **Kabul (Accept):** Dizginin son simgesi okunduktan sonra makinenin ulaştığı durum bir **"Kabul Durumu" (Accepting / Final State)** ise dizgi geçerlidir (KABUL).
+  * **Red (Reject):** Dizgi bittiğinde makine kabul durumunda değilse, dizgi dile ait değildir (RED).
+  * **Yazılım Karşılığı:** Bir `regex.test(input)` fonksiyonunun `true` ya da `false` dönmesi veya derleyicinin sözdizimi hatası (Syntax Error) vermesi.
 
 #### 📝 Not Defterine Yazılacaklar (Hap Bilgiler)
-1. **Sonlu Özdevinir (FA):** Belleği yalnızca sonlu durumlarla sınırlı, harici hafızasız soyut durum makinesidir.
-2. **Şerit Modeli 3 Parçadan Oluşur:** Girdi Şeridi (tek yönlü okuma), Okuma Kafası ve Sonlu Denetim Birimi.
-3. **Kabul / Red Kuralı:** Dizgi bittiğinde varılan durum Final State ise KABUL, değilse RED.
+1. **Sonlu Özdevinir (FA):** Belleği yalnızca sonlu durumlarla sınırlı olan, harici belleksiz (RAM'siz) soyut tanıma makinesidir.
+2. **Şerit Modeli 3 Parçadan Oluşur:**
+   * **Girdi Şeridi:** Simgeleri tutar, sadece soldan sağa tek yönlü okunur.
+   * **Okuma Kafası:** Her adımda bir simge ilerler.
+   * **Sonlu Denetim Birimi:** O anki duruma ve gelen simgeye göre yeni duruma geçer.
+3. **Kabul / Red Kuralı:** Dizgi tamamen bittiğinde makinenin durduğu durum bir **Kabul Durumu (Final State)** ise KABUL edilir; aksi halde RED edilir.
 
 ---
-
