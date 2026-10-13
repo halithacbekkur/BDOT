@@ -4,6 +4,7 @@
 - **Yazar:** Halid Hacbekkur
 - **Bölüm:** Yazılım Mühendisliği (2. Sınıf)
 - **Kitap:** Biçimsel Diller ve Otomata Teorisi (Yazılım Mühendisliği Perspektifiyle)
+- **GitHub Deposu:** https://github.com/halithacbekkur/BDOT
 - **Hedef:** Konuları sırayla, hiçbir alt başlığı ve örneği atlamadan, parça parça ve yazılım mühendisliği vizyonuyla derinlemesine öğrenmek.
 
 ---
